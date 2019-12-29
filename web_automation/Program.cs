@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 
 namespace web_automation
 {
@@ -27,6 +28,7 @@ namespace web_automation
             if (driver.CurrentDriver != null)
             {
                 GoToHomePage(driver);
+                ClosePopUpWindow(driver);
             }
         }
 
@@ -34,7 +36,6 @@ namespace web_automation
         {
             try {
                 driver.CurrentDriver.Navigate().GoToUrl(HOMEPAGE);
-
             }
             catch(Exception ex)
             {
@@ -44,7 +45,31 @@ namespace web_automation
 
         static void ClosePopUpWindow(web_automation.WebDriver driver)
         {
-
+            try
+            {
+                //driver.CurrentDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+                driver.CurrentDriver.FindElement(By.ClassName("ui-icon-closethick")).Click();
+                Console.WriteLine("close pop");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
+
+        /*
+        static void BookTrip(web_automation.WebDriver driver)
+        {
+            try
+            {
+                IWebElement input = driver.CurrentDriver.FindElement(By.Name("search_form[departure_city]"));
+                SelectElement selectElement = new SelectElement(input);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        */
     }
 }
