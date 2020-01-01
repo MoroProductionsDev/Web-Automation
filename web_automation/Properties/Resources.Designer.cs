@@ -59,15 +59,5 @@ namespace web_automation.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] chromedriver {
-            get {
-                object obj = ResourceManager.GetObject("chromedriver", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
