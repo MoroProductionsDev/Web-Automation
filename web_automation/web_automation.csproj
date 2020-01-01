@@ -72,6 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="drivers\chromedriver_win32\chromedriver.exe" />
+    <Content Include="drivers\edgedriver_win64\msedgedriver.exe" />
+    <Content Include="drivers\selenium-firefox-driver-2.4.0.jar\selenium-firefox-driver-2.4.0.jar" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

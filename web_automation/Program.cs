@@ -26,7 +26,7 @@ namespace web_automation
         private enum DriverTimeSpan {THREE_SEC, FIVE_SEC, TEN_SEC};
 
         // Driver Local Location. Absolute Path Not a Resource
-        const string ABSOLUTE_PATH = "C:\\Users\\Jesus\\Documents\\C#\\alliante_automation\\web_automation\\web_automation\\drivers\\chromedriver_win32";
+        const string ABSOLUTE_PATH_CHROME_DRIVER = "C:\\Users\\Jesus\\Documents\\C#\\alliante_automation\\web_automation\\web_automation\\drivers\\chromedriver_win32";
         const string HOMEPAGE = "https://www.allegiantair.com/";
         static readonly uint[] DRIVER_WAIT = {3,  5, 10 };
         static readonly int[] THREAD_SLEEP = { 500, 1000, 1500, 3000 };
@@ -36,9 +36,11 @@ namespace web_automation
             // Initiate Web Driver
             web_automation.WebDriver driver;
 
+            ProgramHeader();
+
             // Driver initialization
             // Absolute Path
-            driver = new WebDriver(ABSOLUTE_PATH, IBrowser.CHROME);
+            driver = new WebDriver(ABSOLUTE_PATH_CHROME_DRIVER, IBrowser.CHROME);
 
             driver.CurrentDriver.Manage().Window.Maximize();    // Maximize window
 
@@ -397,6 +399,8 @@ namespace web_automation
 
             // VALIDATION
             Assert.AreEqual(calculatedBalance, total_USD);
+
+            Console.WriteLine(Environment.NewLine + "ASSERT PASS!!!" + Environment.NewLine);
         }
 
         /// <summary>
@@ -448,7 +452,6 @@ namespace web_automation
             }
         }
 
-        //
         /// <summary>
         /// Find the next Available date for departure or return.
         /// </summary>
@@ -547,6 +550,16 @@ namespace web_automation
             {
                 Console.WriteLine(staElemRef_Ex.Message);
             }
+        }
+
+        private static void ProgramHeader()
+        {
+            Console.WriteLine(  "author: \tRaul Rivero Rubio" + Environment.NewLine +
+                                "release: \t1/1/2020" + Environment.NewLine +
+                                "version: \t1.0" + Environment.NewLine +
+                                "brief: \tThis application automates the process of filling a flighting form for Allegiant airlines " + Environment.NewLine + 
+                                "\tbase on the options provide. It compares the calculated fees from the website with the website form fees and " + Environment.NewLine +
+                                "\tit will exit if it does not match." + Environment.NewLine);
         }
     }
 }
