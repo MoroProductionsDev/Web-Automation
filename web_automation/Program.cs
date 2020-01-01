@@ -27,17 +27,19 @@ namespace web_automation
         const string ABSOLUTE_PATH = "C:\\Users\\Jesus\\Documents\\C#\\alliante_automation\\web_automation\\web_automation\\drivers\\chromedriver_win32";
         const string HOMEPAGE = "https://www.allegiantair.com";
 
-
         static void Main(string[] args)
         {
             // Initiate Web Driver
             web_automation.WebDriver driver = new WebDriver(ABSOLUTE_PATH, IBrowser.CHROME);
+            driver.CurrentDriver.Manage().Window.Maximize();    // Maximize window
 
             if (driver.isConEstablished())
             {
                 GoToHomePage(driver);
                 ClosePopUpWindow(driver);
                 BookTrip(driver);
+                Verify(driver);
+                bundle(driver);
             }
         }
 
@@ -77,22 +79,25 @@ namespace web_automation
             const int ROUND_TRIP = 0;
             const int ONEWAY = 1;
             int trip_choice = 0;
+            IWebElement form_input = null;
 
-            Thread.Sleep(700);
+            Thread.Sleep(1000);
             // DEPARTURE_CITY
-            ActionOnInput(driver, Element_By.NAME, InputAcition.CLICK, "search_form[departure_city]", "");
-            ActionOnInput(driver, Element_By.NAME, InputAcition.SENDKEYS, "search_form[departure_city]", DEPARTURE_CITY);
+            form_input = GetElement(driver, Element_By.NAME, "search_form[departure_city]");
+            ActionOnInput(form_input, InputAcition.CLICK, "");
+            ActionOnInput(form_input, InputAcition.SENDKEYS, DEPARTURE_CITY);
 
-
-            Thread.Sleep(700);
+            Thread.Sleep(1000);
             // DESTINATION_CITY
             try
             {
                 // Same distination not allowed.
                 if (DESTINATION_CITY != DEPARTURE_CITY)
                 {
-                    ActionOnInput(driver, Element_By.NAME, InputAcition.CLICK, "search_form[destination_city]", "");
-                    ActionOnInput(driver, Element_By.NAME, InputAcition.SENDKEYS, "search_form[destination_city]", DESTINATION_CITY);
+
+                    form_input = GetElement(driver, Element_By.NAME, "search_form[destination_city]");
+                    ActionOnInput(form_input, InputAcition.CLICK, "");
+                    ActionOnInput(form_input, InputAcition.SENDKEYS, DESTINATION_CITY);
                 }
                 else
                 {
@@ -104,7 +109,8 @@ namespace web_automation
                 Console.WriteLine(ex.Message);
             }
 
-            Thread.Sleep(1000);
+            Thread.Sleep(1500);
+
             // Trip type (return) || (oneway)
             if (trip_choice == ROUND_TRIP)
             {
@@ -113,6 +119,8 @@ namespace web_automation
 
                 // departure date
                 NextAvailablesDate(driver, "search_form[departure_date]", "depart", 0);
+
+                Thread.Sleep(1500);
 
                 // return date
                 NextAvailablesDate(driver, "search_form[return_date]", "return", 0);
@@ -126,27 +134,123 @@ namespace web_automation
                 // departure date
                 NextAvailablesDate(driver, "search_form[departure_date]", "depart", 0);
             }
+
+            Thread.Sleep(1000);
+
+            uint adultsCnt = 3;         // adults count
+            uint childrenCnt = 1;       // children count
+            form_input = GetElement(driver, Element_By.NAME, "search_form[adults]");
+            // Count Adult Passengers
+            ActionOnInput(form_input, InputAcition.CLICK, "");
+            ActionOnInput(form_input, InputAcition.SENDKEYS, adultsCnt.ToString());
+
+            // Count Children Passengers
+            form_input = GetElement(driver, Element_By.NAME, "search_form[children]");
+            ActionOnInput(form_input, InputAcition.CLICK, "");
+            ActionOnInput(form_input, InputAcition.SENDKEYS, childrenCnt.ToString());
+            ActionOnInput(form_input, InputAcition.CLICK, "");
+
+            Thread.Sleep(1500);
+
+            if (form_input.Text != "0")
+            {
+                // array containers of name attribute of the inputs.
+                string[] months =  {"search_form[search_child_1_month]", "search_form[search_child_2_month]", "search_form[search_child_3_month]" };
+                string[] days = { "search_form[search_child_1_day]", "search_form[search_child_2_day]", "search_form[search_child_3_day]" };
+                string[] years = { "search_form[search_child_1_year]", "search_form[search_child_2_year]", "search_form[search_child_3_year]" };
+
+                Thread.Sleep(1000);
+
+                for (uint i = 0; i < childrenCnt; ++i) {
+                    form_input = GetElement(driver, Element_By.NAME, months[i]);
+                    ActionOnInput(form_input, InputAcition.CLICK, "");
+                    ActionOnInput(form_input, InputAcition.SENDKEYS, "JUL");
+
+                    Thread.Sleep(1000);
+
+                    form_input = GetElement(driver, Element_By.NAME, days[i]);
+                    ActionOnInput(form_input, InputAcition.CLICK, "");
+                    ActionOnInput(form_input, InputAcition.SENDKEYS, "19");
+
+                    Thread.Sleep(1000);
+
+                    form_input = GetElement(driver, Element_By.NAME, years[i]);
+                    ActionOnInput(form_input, InputAcition.CLICK, "");
+                    ActionOnInput(form_input, InputAcition.SENDKEYS, "2015");
+                    ActionOnInput(form_input, InputAcition.CLICK, "");
+                }
+
+                //Thread.Sleep(5000);
+                //GetElement(driver, Element_By.NAME, "search_form[search_child_1_lap]").Click();
+
+                //Thread.Sleep(3000);
+                //GetElement(driver, Element_By.CLASSNAME, "close").Click();
+            }
+
+            Thread.Sleep(1500);
+            // Next Page
+            GetElement(driver, Element_By.ID, "submit-search").Click();
+        }
+
+        static void Verify(web_automation.WebDriver driver)
+        {
+            Thread.Sleep(1500);
+
+            // Scroll Down
+            IWebElement element = GetElement(driver, Element_By.XPATH, "//*[@id=\"flights\"]/div[6]/div[3]/button");
+            Actions actions = new Actions(driver.CurrentDriver);
+            actions.MoveToElement(element);
+            actions.Perform();
+
+            Thread.Sleep(1500);
+            // Next Page
+            element.Click();
+        }
+
+        static void bundle(web_automation.WebDriver driver)
+        {
+            IWebElement element;
+            Thread.Sleep(1500);
+            string[] bundle = { "//*[@id=\"package\"]/fieldset/div/div[3]/div/div[2]/div[2]/button",
+                                "//*[@id=\"package\"]/fieldset/div/div[5]/div/div[2]/div[2]/button" };
+
+            // Get Bundle
+            GetElement(driver, Element_By.XPATH, bundle[0]).Click();
+
+            Thread.Sleep(1500);
+            // Next Page
+            element = GetElement(driver, Element_By.CLASSNAME, "continue");
+            element.Click();
         }
 
         /// <summary>
-        /// 
+        /// Finds an web eleemnt base on the value of the attribute and the method which is found (id, class, name, tagname...)
         /// </summary>
         /// <param name="driver">The current drive use in the this section.</param>
         /// <param name="by">The element method how the its going to be found.</param>
-        /// <param name="action">The action about to be perform on the element (clickable, typeable...)</param>
         /// <param name="attribute_val">The attribute value that is use to find the element</param>
-        /// <param name="key_val">The text stream to be inserted in the input element.</param>
-        private static void ActionOnInput(web_automation.WebDriver driver, Element_By by, InputAcition action, string attribute_val, string keyboard_text)
+        /// <returns>The foud web element || Null if not found</returns>
+        private static IWebElement GetElement(web_automation.WebDriver driver, Element_By by, string attribute_val)
         {
-            IWebElement form_input;
-            if ((form_input = driver.FindElement(attribute_val, by)) != null)
+            return (driver.FindElement(attribute_val, by));
+        }
+
+        /// <summary>
+        /// Perform an action in an web element.
+        /// </summary>
+        /// <param name="input">The input element where the action is going to execute.</param>
+        /// <param name="action">The action about to be perform on the element (clickable, typeable...)</param>
+        /// <param name="key_val">The text stream to be inserted in the input element.</param>
+        private static void ActionOnInput(IWebElement input, InputAcition action, string keyboard_text)
+        {
+            if (input != null)
             {
                 try
                 {
                     switch (action)
                     {
-                        case InputAcition.CLICK: form_input.Click(); break;
-                        case InputAcition.SENDKEYS: form_input.SendKeys(keyboard_text); break;
+                        case InputAcition.CLICK: input.Click(); break;
+                        case InputAcition.SENDKEYS: input.SendKeys(keyboard_text); break;
                     }
                 }
                 catch (ElementClickInterceptedException elmClkInt_Ex)
@@ -181,17 +285,18 @@ namespace web_automation
             string attr;                                // value of a attribute
             IWebElement table_body = null;
             IWebElement table = null;
-            IWebElement nextmonth = null;               // ancher to table for the next month
+            IWebElement form_input = null;               
             IReadOnlyCollection<IWebElement> tds = null;    // all the cell in the table body
 
 
             // Click
-            ActionOnInput(driver, Element_By.NAME, InputAcition.CLICK, attribute_val, "");
+            form_input = GetElement(driver, Element_By.NAME, attribute_val);
+            ActionOnInput(form_input, InputAcition.CLICK, "");
 
             Thread.Sleep(1000);
 
             // Click
-            ActionOnInput(driver, Element_By.NAME, InputAcition.CLICK, attribute_val, "");
+            ActionOnInput(form_input, InputAcition.CLICK, "");
             try
             {
                 // Keep Iterating until you find an available date
@@ -237,7 +342,9 @@ namespace web_automation
                     // If no available date found in the month. Proceed to next month
                     if (!foundAvailableDate)
                     {
-                        ActionOnInput(driver, Element_By.CLASSNAME, InputAcition.CLICK, "ui-datepicker-next", "");
+                        // CLICK (Next Month)
+                        form_input = GetElement(driver, Element_By.CLASSNAME, "ui-datepicker-next");
+                        ActionOnInput(form_input, InputAcition.CLICK, "");
                     }
                 }
             }
