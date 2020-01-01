@@ -21,11 +21,15 @@ namespace web_automation
 {
     class Program
     {
-        enum InputAcition {CLICK, SENDKEYS };
+        enum InputAcition { CLICK, SENDKEYS };
+        private enum ThreadTimeSpan{HALF_SEC, ONE_SEC, ONE_HALF_SEC, THREE_SEC }
+        private enum DriverTimeSpan {THREE_SEC, FIVE_SEC, TEN_SEC};
 
         // Driver Local Location. Absolute Path Not a Resource
         const string ABSOLUTE_PATH = "C:\\Users\\Jesus\\Documents\\C#\\alliante_automation\\web_automation\\web_automation\\drivers\\chromedriver_win32";
         const string HOMEPAGE = "https://www.allegiantair.com/";
+        static readonly uint[] DRIVER_WAIT = {3,  5, 10 };
+        static readonly int[] THREAD_SLEEP = { 500, 1000, 1500, 3000 };
 
         static void Main(string[] args)
         {
@@ -47,10 +51,17 @@ namespace web_automation
 
                 ClosePopUpWindow(driver);
                 BookTrip(driver);
+
+                Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.THREE_SEC]);
                 Verify(driver);
+
+                Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.THREE_SEC]);
                 bundle(driver);
+
+                Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_SEC]);
                 CarRental(driver);
 
+                Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.HALF_SEC]);
                 CheckTotal(driver);
             }
         }
@@ -73,7 +84,7 @@ namespace web_automation
             IWebElement modalPopup;
             if ((modalPopup = driver.FindElement("ui-icon-closethick", Element_By.CLASSNAME)) != null)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
                 modalPopup.Click();
             }
         }
@@ -88,18 +99,20 @@ namespace web_automation
             // User Data
             const string DEPARTURE_CITY = "Las Vegas, NV (LAS)";
             const string DESTINATION_CITY = "Albuquerque, NM (ABQ)";
-            const string MONTH = "JUL";
-            const string DAY = "19";
-            const string YEAR = "2015";
+            string[] usrMonth = { "JUL" , "MAY", "NOV"};
+            uint[] usrDay = { 19, 7, 30};
+            uint[] usrYear = { 2015, 2013, 1995};       
+            int trip_choice = 0;
+            bool wantToddlerChair = false;
             uint[] skip_days = {2 , 3}; // departure, return
             // Const int (Enums)
             const int ROUND_TRIP = 0;
             const int ONEWAY = 1;
-            int trip_choice = 0;
-
             IWebElement form_input = null;
 
-            Thread.Sleep(1000);
+            driver.Wait(DRIVER_WAIT[(int) DriverTimeSpan.THREE_SEC]);
+            Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_SEC]);
+
             // DEPARTURE_CITY
             form_input = GetElement(driver, Element_By.NAME, "search_form[departure_city]");
             ActionOnInput(form_input, InputAcition.CLICK, null);
@@ -127,7 +140,7 @@ namespace web_automation
                 Console.WriteLine(ex.Message);
             }
 
-            Thread.Sleep(1500);
+            Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
 
             // Trip type (return) || (oneway)
             if (trip_choice == ROUND_TRIP)
@@ -145,7 +158,7 @@ namespace web_automation
                 // departure date
                 NextAvailablesDate(driver, "search_form[departure_date]", "depart", skip_days[0], false);
 
-                Thread.Sleep(1500);
+                Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
 
                 // return date
                 NextAvailablesDate(driver, "search_form[return_date]", "return", skip_days[1], true);
@@ -156,7 +169,7 @@ namespace web_automation
 
                 radioBtn = driver.FindElement("//input[@type='radio'][@value='oneway']", Element_By.XPATH);
 
-                // [[NEEDS TO BE FIX]]
+                // [[NEEDS TO BE FIX]]. Radio button
                 if (!radioBtn.Selected)
                 {
                     ActionOnInput(radioBtn, InputAcition.CLICK, null);
@@ -170,7 +183,7 @@ namespace web_automation
             Thread.Sleep(1000);
 
             uint adultsCnt = 3;         // adults count
-            uint childrenCnt = 1;       // children count
+            uint childrenCnt = 2;       // children count
             form_input = GetElement(driver, Element_By.NAME, "search_form[adults]");
             // Count Adult Passengers
             ActionOnInput(form_input, InputAcition.CLICK, null);
@@ -189,25 +202,45 @@ namespace web_automation
                 string[] days = { "search_form[search_child_1_day]", "search_form[search_child_2_day]", "search_form[search_child_3_day]" };
                 string[] years = { "search_form[search_child_1_year]", "search_form[search_child_2_year]", "search_form[search_child_3_year]" };
 
-                Thread.Sleep(1500);
+                Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
 
                 for (uint i = 0; i < childrenCnt; ++i) {
                     form_input = GetElement(driver, Element_By.NAME, months[i]);
                     ActionOnInput(form_input, InputAcition.CLICK, null);
-                    ActionOnInput(form_input, InputAcition.SENDKEYS, MONTH);
+                    ActionOnInput(form_input, InputAcition.SENDKEYS, usrMonth[i]);
 
-                    Thread.Sleep(1000);
+                    Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_SEC]);
 
                     form_input = GetElement(driver, Element_By.NAME, days[i]);
                     ActionOnInput(form_input, InputAcition.CLICK, null);
-                    ActionOnInput(form_input, InputAcition.SENDKEYS, DAY);
+                    ActionOnInput(form_input, InputAcition.SENDKEYS, usrDay[i].ToString());
 
-                    Thread.Sleep(1000);
+                    Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_SEC]);
 
                     form_input = GetElement(driver, Element_By.NAME, years[i]);
                     ActionOnInput(form_input, InputAcition.CLICK, null);
-                    ActionOnInput(form_input, InputAcition.SENDKEYS, YEAR);
+                    ActionOnInput(form_input, InputAcition.SENDKEYS, usrYear[i].ToString());
                     ActionOnInput(form_input, InputAcition.CLICK, null);
+
+                    // [[NEEDS TO BE FIX]]. Radio button
+                    if (DateTime.Now.Year - usrYear[i] <= 2)
+                    {
+                        Thread.Sleep(2000);
+                        if (wantToddlerChair)
+                        {
+                            form_input = GetElement(driver, Element_By.XPATH,
+                                    "//*[@id=\"searchform_models_search_form_3a6b2022-609c-acca-99fc-2fa171a1c5ad_search_child_2_lap_uid34\"]/label[1]/input");
+                            ActionOnInput(form_input, InputAcition.CLICK, null);
+                        } else
+                        {
+                            form_input = GetElement(driver, Element_By.XPATH,
+                                    "//*[@id=\"searchform_models_search_form_3a6b2022-609c-acca-99fc-2fa171a1c5ad_search_child_2_lap_uid34\"]/label[2]/input");
+                            ActionOnInput(form_input, InputAcition.CLICK, null);
+                        }
+                    }
+                    // [[end]]
+
+                    Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.HALF_SEC]);
                 }
 
                 //Thread.Sleep(5000);
@@ -216,8 +249,6 @@ namespace web_automation
                 //Thread.Sleep(3000);
                 //GetElement(driver, Element_By.CLASSNAME, "close").Click();
             }
-
-            Thread.Sleep(1500);
 
             // Submit form and go Next Page
             ActionOnInput(GetElement(driver, Element_By.ID, "submit-search"), InputAcition.CLICK, null);
@@ -229,10 +260,10 @@ namespace web_automation
         /// <param name="driver">The current drive use in the this section.</param>
         static void Verify(web_automation.WebDriver driver)
         {
-            Thread.Sleep(1500);
             Actions actions;        
             IWebElement nextPage;
 
+            driver.Wait(DRIVER_WAIT[(int)DriverTimeSpan.THREE_SEC]);
             nextPage = GetElement(driver, Element_By.XPATH, "//*[@id=\"flights\"]/div[6]/div[3]/button");
 
             // Scroll Down
@@ -240,7 +271,7 @@ namespace web_automation
             actions.MoveToElement(nextPage);
             actions.Perform();
 
-            Thread.Sleep(1500);
+            Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
 
             // Next Page
             ActionOnInput(nextPage, InputAcition.CLICK, null);
@@ -252,7 +283,7 @@ namespace web_automation
         /// <param name="driver">The current drive use in the this section.</param>
         static void bundle(web_automation.WebDriver driver)
         {
-            Thread.Sleep(1500);
+            driver.Wait(DRIVER_WAIT[(int)DriverTimeSpan.THREE_SEC]);
             string[] bundle = { "//*[@id=\"package\"]/fieldset/div/div[3]/div/div[2]/div[2]/button",
                                 "//*[@id=\"package\"]/fieldset/div/div[5]/div/div[2]/div[2]/button" };
 
@@ -280,7 +311,7 @@ namespace web_automation
             string[] carTypes = {"Economy 2/4 Door", "Compact 2/4 Doorr", "Intermediate 2/4 Door", "Standard 2/4 Door", "Fullsize 2/4 Door",
                                 "Premium 2/4 Door"};
 
-            Thread.Sleep(1500);
+            Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
 
             table = driver.FindElement("//*[@id=\"vendors\"]/div[2]/table", Element_By.XPATH);
 
@@ -292,7 +323,7 @@ namespace web_automation
                     // Check for specific agency
                     try
                     {
-                        Thread.Sleep(2000);
+                        Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
 
                         if (elem.GetAttribute("aria-label").Contains(carAgencies[0]))
                         {
@@ -311,7 +342,8 @@ namespace web_automation
             }
 
 
-            Thread.Sleep(1500);
+            Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_SEC]);
+
             nextPage = GetElement(driver, Element_By.CLASSNAME, "continue");
 
             if (nextPage != null)
@@ -322,7 +354,7 @@ namespace web_automation
                 actions.Perform();
             }
 
-            Thread.Sleep(3500);
+            Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
 
             // Next Page
             ActionOnInput(nextPage, InputAcition.CLICK, null);
@@ -337,6 +369,9 @@ namespace web_automation
             decimal allegiant_bonus;
             decimal total_USD;
             decimal calculatedBalance = 0;
+
+            driver.Wait(DRIVER_WAIT[(int)DriverTimeSpan.THREE_SEC]);
+            Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_HALF_SEC]);
 
             td = driver.FindElement("//*[@id=\"pricing\"]/div/table/tbody[1]/tr/td", Element_By.XPATH);
             Decimal.TryParse(td.Text.Substring(1), out flight_car_price);
@@ -420,6 +455,7 @@ namespace web_automation
         /// <param name="attribute_val">The attribute value that is use to find the element.</param>
         /// <param name="flightType">The type of flight either (oneway) || roundtrip (return).</param>
         /// <param name="skip_days">The counter of how many available dates should be skip.</param>
+        /// /// <param name="isReturnDate">Bool flag to ignore an extract click in the return input.</param>
         private static void NextAvailablesDate(web_automation.WebDriver driver, string attribute_val, string flightType, uint skip_days, bool isReturnDate)
         {
             bool foundAvailableDate = false;            // flag for available date
@@ -434,7 +470,7 @@ namespace web_automation
             form_input = GetElement(driver, Element_By.NAME, attribute_val);
             ActionOnInput(form_input, InputAcition.CLICK, null);
 
-            Thread.Sleep(1000);
+            Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_SEC]);
 
             if (!isReturnDate)
             {
@@ -472,16 +508,16 @@ namespace web_automation
                             // Check if their days needed to be skipped
                             if (skip_days == 0)
                             {
-                                driver.Wait(50);
-                                Thread.Sleep(1000);
+                                Thread.Sleep(THREAD_SLEEP[(int)ThreadTimeSpan.ONE_SEC]);
+
                                 ActionOnInput(entry, InputAcition.CLICK, null);
                                 foundAvailableDate = true;
+                                break;
                             } else
                             {
                                 // is (Unsigned int). Only decrement while is not 0.
                                 --skip_days;
                             }
-                            break;
                         }
                     }
 
