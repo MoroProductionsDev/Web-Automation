@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("web_automation")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("This application automates the process of filling a flighting form for Allegiant Airlines.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("MoroSoft_Dev")]
 [assembly: AssemblyProduct("web_automation")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]

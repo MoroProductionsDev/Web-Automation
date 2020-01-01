@@ -1,7 +1,7 @@
 ﻿/*# @author: Raul Rivero Rubio
 ### @date:  12/27/2019
 ### @version: 1.0
-### @brief: This application automate the process of filling a flighting form for Allegiant Airlines.
+### @brief: This application automates the process of filling a flighting form for Allegiant Airlines.
 ###         Base on the options provide it will calculate the total mount of the flight.
 */
 
