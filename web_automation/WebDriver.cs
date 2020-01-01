@@ -18,7 +18,7 @@ using OpenQA.Selenium.Chrome;
 namespace web_automation
 {
     public enum IBrowser { CHROME, FIREFOX, EDGE}
-    public enum Element_By {ID, NAME, CLASSNAME,TAGNAME , XPATH}
+    public enum Element_By {ID, NAME, CLASSNAME,TAGNAME , XPATH, CSS_SELECTOR }
 
 
     public class WebDriver
@@ -109,12 +109,20 @@ namespace web_automation
                     case Element_By.XPATH:
                         element = webdriver.FindElement(By.XPath(value));
                         break;
+                    case Element_By.CSS_SELECTOR:
+                        element = webdriver.FindElement(By.CssSelector(value));
+                        break;
                 }
             }
-            catch (NoSuchElementException ex)
+            catch (NoSuchElementException ntschElem_Ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ntschElem_Ex.Message);
             }
+            catch(NoSuchWindowException ntschWin_Ex)
+            {
+                Console.WriteLine(ntschWin_Ex.Message);
+            }
+
             return element;
         }
 
@@ -146,6 +154,9 @@ namespace web_automation
                         break;
                     case Element_By.XPATH:
                         elementsList = webdriver.FindElements(By.XPath(value));
+                        break;
+                    case Element_By.CSS_SELECTOR:
+                        elementsList = webdriver.FindElements(By.CssSelector(value));
                         break;
                 }
             }
