@@ -1,4 +1,4 @@
-# <name of app>
+# <Web Automation>
 
 An C# console application automates the process of filling a flighting form for Allegiant Airlines.
    Base on the options provide it will calculate the total mount of the flight.
@@ -9,7 +9,7 @@ An C# console application automates the process of filling a flighting form for 
    The program has a set of predifined value for the user. There is not user interaction. It is for testing purposes.
    All value of the user are located at the beginning of each module.
    
-   // Executables are located under
+   Executables are located under:
    directories: bin\Release\
    "web_automation\web_automation\bin\Release\netcoreapp2.2\"
    
@@ -20,7 +20,7 @@ Submitted by: <Raul Rivero Rubio>
 
 ## User Stories
 
-The following **required** functionality tp proceed is complete:
+The following **required** functionality to proceed is complete:
 
 * [X] Connects the WebDriver (Chrome)
 * [X] Navigages to landing page
