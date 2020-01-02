@@ -15,6 +15,11 @@ An C# console application automates the process of filling a flighting form for 
    
    for
    win10 (x64), mac-10.11 (x64), linux (x64)
+   
+   Note:
+   Thread sleep where implemented to make each step more visible.
+   Without it data will be filled to quickle.
+   Some elements become visible after an action is executed and requires a small pause before being visible in the DOM.
 
 Submitted by: <Raul Rivero Rubio>
 
@@ -29,6 +34,9 @@ The following **required** functionality to proceed is complete:
 * [X] Locates, clicks the data for both departure date and return date using the calender calender
 * [X] Locates, clicks Submit button.
 * [X] Locates, clicks Continue button.
+* [X] Assert total price is correct.
+* [X] Windows testing.
+* [ ] Linux or Mac testing.
 
 The following **additional** features are implemented:
 * [ ] Locates, clicks and writes radio button for both roundtrip and oneway.
