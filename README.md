@@ -1,9 +1,9 @@
 # <Web Automation>
 
-An C# console application automates the process of filling a flighting form for Allegiant Airlines.
+A C# console application that automates the process of filling a flight form for Allegiant Airlines.
    Base on the options provide it will calculate the total mount of the flight.
    
-   It finds elements in the DOM (Document Object Model) of the html site and executre a behavior
+   It finds elements in the DOM (Document Object Model) of the html site and execute a behavior
    using C#.Net.
    
    The program has a set of predifined value for the user. There is not user interaction. It is for testing purposes.
@@ -18,8 +18,8 @@ An C# console application automates the process of filling a flighting form for 
    
    Note:
    Thread sleep where implemented to make each step more visible.
-   Without it data will be filled to quickle.
-   Some elements become visible after an action is executed and requires a small pause before being visible in the DOM.
+   Without it data will be filled too quickle.
+   Some elements become visible after an action is executed and requires a small pause before they are visible in the DOM.
 
 Submitted by: <Raul Rivero Rubio>
 
@@ -31,7 +31,7 @@ The following **required** functionality to proceed is complete:
 * [X] Navigages to landing page
 * [X] Closes the modal pop up.
 * [X] Locates, clicks and writes the departure and destination area.
-* [X] Locates, clicks the data for both departure date and return date using the calender calender
+* [X] Locates, clicks the data for both departure date and return date using the calender
 * [X] Locates, clicks Submit button.
 * [X] Locates, clicks Continue button.
 * [X] Assert total price is correct.
